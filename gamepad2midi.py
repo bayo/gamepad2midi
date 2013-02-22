@@ -144,9 +144,7 @@ class Gamepad2Midi:
 	def run(self):
 		pygame.init()
 
-		pygame.display.set_caption("gamepad2midi")
-		win = pygame.display.set_mode((640, 480))
-		ui = SdlUserInterface(win)
+		ui = SdlUserInterface()
 
 		self.init_inputs(ui, self.mapping)
 
@@ -180,7 +178,6 @@ class Gamepad2Midi:
 
 			if change:
 				ui.draw()
-				pygame.display.flip()
 
 			pygame.time.wait(10)
 

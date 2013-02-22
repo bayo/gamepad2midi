@@ -7,9 +7,13 @@ from pygame import *
 
 class SdlUserInterface:
 
-	def __init__(self, win):
+	def __init__(self):
 		self.joysticks = []
 		self.status = {}
+
+		self.screen_size = (640, 480)
+		display.set_caption("gamepad2midi")
+		win = display.set_mode(self.screen_size)
 		self.win = win
 
 		self.font = font.Font(None, 26)
@@ -20,11 +24,22 @@ class SdlUserInterface:
 		self.color_on = (50, 255, 50)
 		self.text_color_on = (255, 255, 255)
 
+	def resize_screen(self, size):
+		if self.screen_size == size:
+			return
+
+		display.quit()
+
+		self.screen_size = size
+		display.init()
+		display.set_caption("gamepad2midi")
+		self.win = display.set_mode(self.screen_size)
+
+
 	def register_joystick(self, id, name, buttons, axis):
 		while len(self.joysticks) < id + 1:
 			self.joysticks.append(None)
 		self.joysticks[id] = (id, name, buttons, axis)
-
 
 	def release_button(self, joy, button):
 		key = ("button", joy, button)
@@ -66,13 +81,15 @@ class SdlUserInterface:
 	def draw(self):
 		bgcolor = (50, 50, 50)
 		black = (0, 0, 0)
-		self.win.fill(bgcolor, (0, 0, 640, 480))
-		y = 5
+		self.win.fill(bgcolor, (0, 0, self.screen_size[0], self.screen_size[1]))
+		width = 0
+		pos = (2, 5)
 		for id, name, buttons, axis in self.joysticks:
-			self.win.blit(self.font.render(name, 1, (155, 155, 155), bgcolor), (2, y))
-			y += 30
+			pos = (2, pos[1])
+			pos = self.draw_text(pos, name, (155, 155, 155), bgcolor)
+			width = pos[0]
+			pos = (10, pos[1] + 30)
 
-			pos = (10, y)
 			for button in xrange(0, buttons):
 				key = ("button", id, button)
 				pressed = False
@@ -84,6 +101,8 @@ class SdlUserInterface:
 					color = self.color_on
 					text_color = self.text_color_on
 				pos = self.draw_text(pos, "b" + str(button + 1), text_color, color)
+				if width < pos[0]:
+					width = pos[0]
 
 			for axis_id in xrange(0, axis):
 				key = ("axis", id, axis_id)
@@ -91,6 +110,17 @@ class SdlUserInterface:
 				if key in self.status:
 					value = self.status[key]
 				pos = self.draw_axis(pos, axis_id, value)
+				if width < pos[0]:
+					width = pos[0]
 
-			y += 50
+			pos = (10, pos[1] + 50)
+
+		if len(self.joysticks) == 0:
+			pos = self.draw_text(pos, "No joystick connected", (155, 155, 155), bgcolor)
+			if width < pos[0]:
+				width = pos[0]
+			pos = (10, pos[1] + 30)
+
+		self.resize_screen((width, pos[1]))
+		display.flip()
 
