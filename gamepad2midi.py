@@ -144,7 +144,8 @@ class Gamepad2Midi:
 	def run(self):
 		pygame.init()
 
-		win = pygame.display.set_mode((640, 480), RESIZABLE)
+		pygame.display.set_caption("gamepad2midi")
+		win = pygame.display.set_mode((640, 480))
 		ui = SdlUserInterface(win)
 
 		self.init_inputs(ui, self.mapping)
