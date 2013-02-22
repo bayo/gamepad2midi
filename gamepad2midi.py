@@ -71,7 +71,7 @@ class Gamepad2Midi:
 
 		#from pygameMidiConnector import *
 		#midiConnector = pygameMidiConnector()
-		from RtmidiMidiConnector import *
+		from RtmidiMidiConnector import RtmidiMidiConnector
 		self.midiConnector = RtmidiMidiConnector()
 
 		self.mapping = mapping
