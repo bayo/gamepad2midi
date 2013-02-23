@@ -6,7 +6,6 @@ The main use case is to use gamepad to control music softwares using JACK, not t
 
 It use pygame (SDL) to catch input controls and python-rtmidi to send MIDI messages.
 
-TODO improve MIDI connectors to support at least JACK
 TODO use configuration file for bindings
 TODO use command line options to config MIDI connectors and binding configuration
 TODO create a light-weight user interface
@@ -65,19 +64,42 @@ class InputMapping:
 		"""
 		self.bindings[("axis_range", joy_name, axis_id)] = (channel, lower_note, upper_note)
 
+
+def midi_connector_factory(api):
+
+	try:
+		import rtmidi
+
+		apis = {
+			"CoreMIDI": rtmidi.API_MACOSX_CORE,
+			"ALSA": rtmidi.API_LINUX_ALSA,
+			"JACK": rtmidi.API_UNIX_JACK,
+			"WS_MM": rtmidi.API_WINDOWS_MM,
+			"WS_KS": rtmidi.API_WINDOWS_KS,
+		}
+		if api in apis:
+			rtmidi_api = apis[api]
+			from RtmidiMidiConnector import RtmidiMidiConnector
+			return RtmidiMidiConnector(rtmidi_api)
+		else:
+			print "rtmidi do not support API name \"%s\"" % api
+
+	except ImportError:
+		print "WARNING: rtmidi python library is not available"
+		pass
+
+	# here we can add another python lib
+
+	print "WARNING: use pygame midi connector. MIDI api is not selectable"
+	# TODO on my system (Ubuntu 12.10) pygame MIDI crash
+	return PygameMidiConnector()
+
 class Gamepad2Midi:
 
-	def __init__(self, mapping):
-
-		#from pygameMidiConnector import *
-		#midiConnector = pygameMidiConnector()
-		from RtmidiMidiConnector import RtmidiMidiConnector
-		self.midiConnector = RtmidiMidiConnector()
-
+	def __init__(self, api, mapping):
+		self.midi_connector = midi_connector_factory(api)
 		self.mapping = mapping
-
 		self.old_axis_note = {}
-
 
 	def send_button(self, joy, button, enabled):
 		channel, note = self.mapping.get_button_note(joy, button)
@@ -86,10 +108,10 @@ class Gamepad2Midi:
 
 		if enabled:
 			print "note on ", channel + 1, button
-			self.midiConnector.note_on(channel, button)
+			self.midi_connector.note_on(channel, button)
 		else:
 			print "note off", channel + 1, button
-			self.midiConnector.note_off(channel, button)
+			self.midi_connector.note_off(channel, button)
 
 	def send_axis(self, joy, axis_id, value):
 		global old_axis_note
@@ -106,10 +128,10 @@ class Gamepad2Midi:
 
 		if old_note != None:
 			print "note off", channel + 1, old_note
-			self.midiConnector.note_off(channel, old_note)
+			self.midi_connector.note_off(channel, old_note)
 		if note != None:
 			print "note on ", channel + 1, note
-			self.midiConnector.note_on(channel, note)
+			self.midi_connector.note_on(channel, note)
 
 		self.old_axis_note[(joy, axis_id)] = note
 
@@ -184,15 +206,29 @@ class Gamepad2Midi:
 		pygame.quit()
 
 
-def gamepad2midi(mapping):
-	job = Gamepad2Midi(mapping)
+def gamepad2midi(api, mapping):
+	"""Launch gamepad2midi.
+
+	The param ``api`` can be one of the string values:
+	* "CoreMIDI"  for Apple Mac OS X CoreMIDI
+	* "ALSA":     for Linux ALSA
+	* "JACK":     for UNIX JACK
+	* "WS_MM":    for Microsoft Windows Multimedia
+	* "WS_KS":    for Microsoft Windows Kernel Streaming (wich is right now (rtmidi 0.3a) not supported bby rtmidi)
+	"""
+
+	job = Gamepad2Midi(api, mapping)
 	job.run()
 
 def main():
+	"""
+	Launch gamepad2midi with default ALSA MIDI API and an empty binding.
+	Call the function ``gamepad2midi(api, mapping)`` to custom it.
+	"""
 	# TODO read a config file or generate an auto config instead of an empty one
 	print "WARNING: Gamepad mapping is empty. Create your own mapping using the template mygamepad2midi.py "	
 	mapping = InputMapping()
-	gamepad2midi(mapping)
+	gamepad2midi("ALSA", mapping)
 
 if __name__ == '__main__':
 	main()

@@ -9,8 +9,8 @@ import rtmidi
 
 class RtmidiMidiConnector(MidiConnector):
 
-	def __init__(self):
-		out = rtmidi.MidiOut()
+	def __init__(self, rtapi):
+		out = rtmidi.MidiOut(rtapi, "gamepad2midi")
 
 		ports = self.select_midiport(out)
 		if ports is None:

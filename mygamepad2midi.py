@@ -10,7 +10,7 @@ def main():
 	mapping.bind_axis_range("Logitech Logitech(R) Precision(TM) Gamepad", 0, 10, 30, 40)
 	mapping.bind_axis_range("Logitech Logitech(R) Precision(TM) Gamepad", 1, 11, 30, 40)
 
-	gamepad2midi(mapping)
+	gamepad2midi("JACK", mapping)
 
 if __name__ == '__main__':
 	main()
