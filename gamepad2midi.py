@@ -160,7 +160,7 @@ class Gamepad2Midi:
 			ui.register_joystick(j.get_id(), j.get_name(), j.get_numbuttons(), j.get_numaxes())
 
 		if not joystick.get_count():
-			print "No Joysticks to Initialize"
+			print "No joystick connected"
 			return
 
 	def run(self):

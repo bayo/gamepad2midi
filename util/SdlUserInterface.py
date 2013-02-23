@@ -116,7 +116,7 @@ class SdlUserInterface:
 			pos = (10, pos[1] + 50)
 
 		if len(self.joysticks) == 0:
-			pos = self.draw_text(pos, "No joystick connected", (155, 155, 155), bgcolor)
+			pos = self.draw_text(pos, "No joystick connected", (255, 0, 0), bgcolor)
 			if width < pos[0]:
 				width = pos[0]
 			pos = (10, pos[1] + 30)
