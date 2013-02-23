@@ -211,11 +211,11 @@ def gamepad2midi(api, mapping):
 	"""Launch gamepad2midi.
 
 	The param ``api`` can be one of the string values:
-	* "CoreMIDI"  for Apple Mac OS X CoreMIDI
-	* "ALSA":     for Linux ALSA
-	* "JACK":     for UNIX JACK
-	* "WS_MM":    for Microsoft Windows Multimedia
-	* "WS_KS":    for Microsoft Windows Kernel Streaming (wich is right now (rtmidi 0.3a) not supported bby rtmidi)
+	* "CoreMIDI"  to use Apple Mac OS X CoreMIDI
+	* "ALSA":     to use Linux ALSA
+	* "JACK":     to use UNIX JACK
+	* "WS_MM":    to use Microsoft Windows Multimedia
+	* "WS_KS":    to use Microsoft Windows Kernel Streaming (witch is right now (rtmidi 0.3a) not suported by rtmidi)
 	"""
 
 	job = Gamepad2Midi(api, mapping)
