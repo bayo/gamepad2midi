@@ -207,29 +207,56 @@ class Gamepad2Midi:
 		pygame.quit()
 
 
+available_midi_apis = {
+	"CoreMIDI":  "Apple Mac OS X CoreMIDI interface",
+	"ALSA":     "Linux ALSA interface",
+	"JACK":     "UNIX JACK interface",
+	"WS_MM":    "Microsoft Windows Multimedia interface",
+	"WS_KS":    "Microsoft Windows Kernel Streaming interface (witch is right now (rtmidi 0.3a) unsupported by rtmidi)",
+}
+
 def gamepad2midi(api, mapping):
-	"""Launch gamepad2midi.
-
-	The param ``api`` can be one of the string values:
-	* "CoreMIDI"  to use Apple Mac OS X CoreMIDI
-	* "ALSA":     to use Linux ALSA
-	* "JACK":     to use UNIX JACK
-	* "WS_MM":    to use Microsoft Windows Multimedia
-	* "WS_KS":    to use Microsoft Windows Kernel Streaming (witch is right now (rtmidi 0.3a) not suported by rtmidi)
 	"""
-
+	Launch gamepad2midi.
+	"""
 	job = Gamepad2Midi(api, mapping)
 	job.run()
 
 def main():
 	"""
-	Launch gamepad2midi with default ALSA MIDI API and an empty binding.
+	Launch gamepad2midi with command line options and an empty binding.
 	Call the function ``gamepad2midi(api, mapping)`` to custom it.
 	"""
 	# TODO read a config file or generate an auto config instead of an empty one
-	print "WARNING: Gamepad mapping is empty. Create your own mapping using the template mygamepad2midi.py "	
+	print "WARNING: Gamepad mapping is empty. Create your own mapping using the template mygamepad2midi.py "
+
+	from optparse import OptionParser
+
+	parser = OptionParser()
+
+	parser.add_option("-O", "--output", dest="api", help="MIDI output interface",
+		choices=available_midi_apis.keys(), type="choice")
+
+	# TODO rework "print" with logger
+	#parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False,
+	#	help="Print more information to stdout")
+
+	# it is quite a hack to display choices options, but it works
+	g = parser.add_option_group("Available output interfaces")
+	keys = available_midi_apis.keys()
+	keys.sort()
+	for api in keys:
+		comment = available_midi_apis[api]
+		g.add_option("--" + api, help=comment, dest="api", action="store_const", const=api)
+
+	(options, args) = parser.parse_args()
+
+	if options.api == None:
+		parser.print_help()
+		return
+
 	mapping = InputMapping()
-	gamepad2midi("ALSA", mapping)
+	gamepad2midi(options.api, mapping)
 
 if __name__ == '__main__':
 	main()
