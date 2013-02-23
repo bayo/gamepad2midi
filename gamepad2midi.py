@@ -92,6 +92,7 @@ def midi_connector_factory(api):
 
 	print "WARNING: use pygame midi connector. MIDI api is not selectable"
 	# TODO on my system (Ubuntu 12.10) pygame MIDI crash
+	from PygameMidiConnector import PygameMidiConnector
 	return PygameMidiConnector()
 
 class Gamepad2Midi:
