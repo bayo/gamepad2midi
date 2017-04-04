@@ -75,7 +75,6 @@ def midi_connector_factory(api):
 			"ALSA": rtmidi.API_LINUX_ALSA,
 			"JACK": rtmidi.API_UNIX_JACK,
 			"WS_MM": rtmidi.API_WINDOWS_MM,
-			"WS_KS": rtmidi.API_WINDOWS_KS,
 		}
 		if api in apis:
 			rtmidi_api = apis[api]
