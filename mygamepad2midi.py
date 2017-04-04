@@ -16,7 +16,6 @@ def main():
     #	- ALSA: Linux
     #	- CoreMIDI: MacOSX
     #	- WS_MM: Windows MM
-    # 	- WS_KS: Windows KS
     gamepad2midi("JACK", mapping)
 
 
