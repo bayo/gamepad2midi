@@ -16,7 +16,7 @@ TODO use an input library witch allow plug and remove of device
 import sys
 
 import pygame
-from .SdlUserInterface import *
+from .SdlUserInterface import SdlUserInterface
 
 class InputMapping:
 
@@ -48,8 +48,8 @@ class InputMapping:
         note = int(round(lower_note + (upper_note - lower_note) * value))
         return channel, note
 
-    def register_current_joystick(self, joy_name, id):
-        self.joystick_ids[id] = joy_name
+    def register_current_joystick(self, joy_name, jid):
+        self.joystick_ids[jid] = joy_name
 
     def bind_all_buttons(self, joy_name, channel):
         """
@@ -102,7 +102,7 @@ class Gamepad2Midi:
         self.old_axis_note = {}
 
     def send_button(self, joy, button, enabled):
-        channel, note = self.mapping.get_button_note(joy, button)
+        channel, _note = self.mapping.get_button_note(joy, button)
         if channel == None:
             return
 
@@ -138,20 +138,20 @@ class Gamepad2Midi:
     def init_inputs(self, ui, mapping):
         #let's turn on the joysticks just so we can play with em
         print "Inputs:"
-        for x in range(joystick.get_count()):
-            j = joystick.Joystick(x)
+        for x in range(pygame.joystick.get_count()):
+            j = pygame.joystick.Joystick(x)
             j.init()
             print "[%i] %s" % (j.get_id(), j.get_name())
             mapping.register_current_joystick(j.get_name(), j.get_id())
     
-            channel, note = mapping.get_button_note(j.get_id(), 0)
+            channel, _note = mapping.get_button_note(j.get_id(), 0)
             if channel == None:
                 print "\t- Buttons are not binded"
             else:
                 print "\t- Buttons are binded into channel %i" % (channel+1)
 
             for axis_id in xrange(0, j.get_numaxes()):
-                channel, note = mapping.get_axis_note(j.get_id(), axis_id, 0)
+                channel, _note = mapping.get_axis_note(j.get_id(), axis_id, 0)
                 if channel == None:
                     print "\t- Axis %i is not binded" % (axis_id+1)
                 else:
@@ -159,7 +159,7 @@ class Gamepad2Midi:
 
             ui.register_joystick(j.get_id(), j.get_name(), j.get_numbuttons(), j.get_numaxes())
 
-        if not joystick.get_count():
+        if not pygame.joystick.get_count():
             print "No joystick connected"
             return
 
@@ -172,33 +172,33 @@ class Gamepad2Midi:
 
         going = True
         while going:
-            change = False
-            for e in event.get():
-                if e.type == QUIT:
+            has_changed = False
+            for e in pygame.event.get():
+                if e.type == pygame.QUIT:
                     going = False
-                if e.type == KEYDOWN:
-                    if e.key == K_ESCAPE:
+                if e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_ESCAPE:
                         going = False
                     else:
                         global LastKey
                         LastKey = e.key
 
-                if e.type == JOYAXISMOTION:
+                if e.type == pygame.JOYAXISMOTION:
                     joy, axis, value = e.joy, e.axis, e.value
                     ui.set_axis_value(joy, axis, value)
                     self.send_axis(joy, axis, value)
-                elif e.type == JOYBUTTONDOWN:
+                elif e.type == pygame.JOYBUTTONDOWN:
                     joy, button = e.joy, e.button
                     ui.press_button(joy, button)
                     self.send_button(joy, button, True)
-                elif e.type == JOYBUTTONUP:
+                elif e.type == pygame.JOYBUTTONUP:
                     joy, button = e.joy, e.button
                     ui.release_button(joy, button)
                     self.send_button(joy, button, False)
 
-                change = True
+                has_changed = True
 
-            if change:
+            if has_changed:
                 ui.draw()
 
             pygame.time.wait(10)
@@ -250,7 +250,7 @@ def main(mapping=None):
         comment = available_midi_apis[api]
         g.add_option("--" + api, help=comment, dest="api", action="store_const", const=api)
 
-    (options, args) = parser.parse_args()
+    options, _args = parser.parse_args()
 
     if options.api == None:
         parser.print_help()

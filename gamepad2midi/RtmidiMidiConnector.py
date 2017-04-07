@@ -4,7 +4,7 @@
 """MIDI connector using rtmidi library"""
 
 import rtmidi
-from .MidiConnector import *
+from .MidiConnector import MidiConnector
 
 
 class RtmidiMidiConnector(MidiConnector):

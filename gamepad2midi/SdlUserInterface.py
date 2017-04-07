@@ -3,7 +3,8 @@
 
 """User interface using SDL"""
 
-from pygame import *
+import pygame
+
 
 class SdlUserInterface:
 
@@ -12,11 +13,11 @@ class SdlUserInterface:
         self.status = {}
 
         self.screen_size = (640, 480)
-        display.set_caption("gamepad2midi")
-        win = display.set_mode(self.screen_size)
+        pygame.display.set_caption("gamepad2midi")
+        win = pygame.display.set_mode(self.screen_size)
         self.win = win
 
-        self.font = font.Font(None, 26)
+        self.font = pygame.font.Font(None, 26)
 
         #self.color_off = (120, 120, 120)
         self.color_off = (255, 50, 50)
@@ -28,17 +29,17 @@ class SdlUserInterface:
         if self.screen_size == size:
             return
 
-        display.quit()
+        pygame.display.quit()
 
         self.screen_size = size
-        display.init()
-        display.set_caption("gamepad2midi")
-        self.win = display.set_mode(self.screen_size)
+        pygame.display.init()
+        pygame.display.set_caption("gamepad2midi")
+        self.win = pygame.display.set_mode(self.screen_size)
 
-    def register_joystick(self, id, name, buttons, axis):
-        while len(self.joysticks) < id + 1:
+    def register_joystick(self, jid, name, buttons, axis):
+        while len(self.joysticks) < jid + 1:
             self.joysticks.append(None)
-        self.joysticks[id] = (id, name, buttons, axis)
+        self.joysticks[jid] = (jid, name, buttons, axis)
 
     def release_button(self, joy, button):
         key = ("button", joy, button)
@@ -67,7 +68,7 @@ class SdlUserInterface:
             else:
                 text += " "
 
-        text_color = self.text_color_off                 
+        text_color = self.text_color_off
         color = self.color_off
         if activated:
             color = self.color_on
@@ -79,18 +80,17 @@ class SdlUserInterface:
 
     def draw(self):
         bgcolor = (50, 50, 50)
-        black = (0, 0, 0)
         self.win.fill(bgcolor, (0, 0, self.screen_size[0], self.screen_size[1]))
         width = 0
         pos = (2, 5)
-        for id, name, buttons, axis in self.joysticks:
+        for jid, name, buttons, axis in self.joysticks:
             pos = (2, pos[1])
             pos = self.draw_text(pos, name, (155, 155, 155), bgcolor)
             width = pos[0]
             pos = (10, pos[1] + 30)
 
             for button in xrange(0, buttons):
-                key = ("button", id, button)
+                key = ("button", jid, button)
                 pressed = False
                 if key in self.status:
                     pressed = self.status[key]
@@ -104,7 +104,7 @@ class SdlUserInterface:
                     width = pos[0]
 
             for axis_id in xrange(0, axis):
-                key = ("axis", id, axis_id)
+                key = ("axis", jid, axis_id)
                 value = 0
                 if key in self.status:
                     value = self.status[key]
@@ -121,4 +121,4 @@ class SdlUserInterface:
             pos = (10, pos[1] + 30)
 
         self.resize_screen((width, pos[1]))
-        display.flip()
+        pygame.display.flip()
