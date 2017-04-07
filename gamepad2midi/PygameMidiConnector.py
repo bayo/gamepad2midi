@@ -3,7 +3,7 @@
 
 """MIDI connector using pygame library"""
 
-from MidiConnector import *
+from .MidiConnector import *
 
 import pygame
 import pygame.midi

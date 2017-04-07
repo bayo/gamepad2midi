@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from gamepad2midi import *
+import gamepad2midi
 
 
 def main():
-    mapping = InputMapping()
+    mapping = gamepad2midi.InputMapping()
 
     # Put your gamepad name here and bind your custom mappings
     name = "Logitech Logitech(R) Precision(TM) Gamepad"
@@ -17,8 +17,7 @@ def main():
     # - ALSA: Linux
     # - CoreMIDI: MacOSX
     # - WS_MM: Windows MM
-    gamepad2midi("ALSA", mapping)
+    gamepad2midi.run("ALSA", mapping)
 
 if __name__ == '__main__':
     main()
-

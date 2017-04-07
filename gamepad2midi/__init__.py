@@ -14,10 +14,9 @@ TODO use an input library witch allow plug and remove of device
 """
 
 import sys
-sys.path.append(sys.path[0] + '/util')
 
 import pygame
-from SdlUserInterface import *
+from .SdlUserInterface import *
 
 class InputMapping:
 
@@ -214,20 +213,22 @@ available_midi_apis = {
 	"WS_KS":    "Microsoft Windows Kernel Streaming interface (witch is right now (rtmidi 0.3a) unsupported by rtmidi)",
 }
 
-def gamepad2midi(api, mapping):
+def run(api, mapping):
 	"""
 	Launch gamepad2midi.
 	"""
 	job = Gamepad2Midi(api, mapping)
 	job.run()
 
-def main():
+def main(mapping=None):
 	"""
 	Launch gamepad2midi with command line options and an empty binding.
 	Call the function ``gamepad2midi(api, mapping)`` to custom it.
 	"""
 	# TODO read a config file or generate an auto config instead of an empty one
-	print "WARNING: Gamepad mapping is empty. Create your own mapping using the template mygamepad2midi.py "
+	if mapping is None:
+		mapping = InputMapping()
+		print "WARNING: Gamepad mapping is empty. Create your own mapping using the template mygamepad2midi.py "
 
 	from optparse import OptionParser
 
@@ -254,8 +255,4 @@ def main():
 		parser.print_help()
 		return
 
-	mapping = InputMapping()
-	gamepad2midi(options.api, mapping)
-
-if __name__ == '__main__':
-	main()
+	run(options.api, mapping)

@@ -7,7 +7,7 @@ Hmmmm... it looks like Pyjack do not support MIDI.
 
 """
 
-from MidiConnector import *
+from .MidiConnector import *
 
 class PyjackMidiConnector(MidiConnector):
 
