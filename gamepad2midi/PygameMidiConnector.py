@@ -24,21 +24,19 @@ ImportError: /usr/lib/libportmidi.so.0: undefined symbol: snd_seq_event_input_pe
 
 class PygameMidiConnector(MidiConnector):
 
-	def __init__(self):
-		pygame.init()
-		pygame.midi.init()
-		self.port = pygame.midi.get_default_output_id()
-    		self.midi_out = pygame.midi.Output(self.port, 0)
+    def __init__(self):
+        pygame.init()
+        pygame.midi.init()
+        self.port = pygame.midi.get_default_output_id()
+        self.midi_out = pygame.midi.Output(self.port, 0)
 
-	def close(self):
-		pygame.midi.quit()
+    def close(self):
+        pygame.midi.quit()
 
-	def note_on(self, channel, note):
-		self.midi_out.note_on(note, channel=channel)
-		print channel, note, "on"
+    def note_on(self, channel, note):
+        self.midi_out.note_on(note, channel=channel)
+        print channel, note, "on"
 
-	def note_off(self, channel, note):
-		self.midi_out.note_off(note, channel=channel)
-		print channel, note, "off"
-
-
+    def note_off(self, channel, note):
+        self.midi_out.note_off(note, channel=channel)
+        print channel, note, "off"
