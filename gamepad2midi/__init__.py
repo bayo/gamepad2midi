@@ -137,8 +137,8 @@ class Gamepad2Midi:
     def init_inputs(self, ui, mapping):
         #let's turn on the joysticks just so we can play with em
         print "Inputs:"
-        for x in range(pygame.joystick.get_count()):
-            j = pygame.joystick.Joystick(x)
+        for jid in range(pygame.joystick.get_count()):
+            j = pygame.joystick.Joystick(jid)
             j.init()
             print "[%i] %s" % (j.get_id(), j.get_name())
             mapping.register_current_joystick(j.get_name(), j.get_id())
@@ -156,7 +156,16 @@ class Gamepad2Midi:
                 else:
                     print "\t- Axis %i is binded into channel %i" % (axis_id+1, channel+1)
 
+            # init ui
             ui.register_joystick(j.get_id(), j.get_name(), j.get_numbuttons(), j.get_numaxes())
+            # looks like reaching state is not working
+            for button_id in range(j.get_numbuttons()):
+                pressed = j.get_button(button_id)
+                if pressed:
+                    ui.press_button(jid, button_id)
+            for axis_id in range(j.get_numaxes()):
+                value = j.get_axis(axis_id)
+                ui.set_axis_value(jid, axis_id, value)
 
         if not pygame.joystick.get_count():
             print "No joystick connected"
