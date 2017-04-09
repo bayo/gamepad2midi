@@ -16,7 +16,6 @@ TODO use an input library witch allow plug and remove of device
 import sys
 
 import pygame
-from .SdlUserInterface import SdlUserInterface
 
 class InputMapping:
 
@@ -163,10 +162,18 @@ class Gamepad2Midi:
             print "No joystick connected"
             return
 
+    def create_user_interface(self):
+        try:
+            from .QtUserInterface import QtUserInterface
+            return QtUserInterface()
+        except ImportError:
+            from .SdlUserInterface import SdlUserInterface
+            return SdlUserInterface()
+
     def run(self):
         pygame.init()
 
-        ui = SdlUserInterface()
+        ui = self.create_user_interface()
         ui.init()
 
         self.init_inputs(ui, self.mapping)
