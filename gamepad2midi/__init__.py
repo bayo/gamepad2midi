@@ -167,6 +167,7 @@ class Gamepad2Midi:
         pygame.init()
 
         ui = SdlUserInterface()
+        ui.init()
 
         self.init_inputs(ui, self.mapping)
 
@@ -199,10 +200,14 @@ class Gamepad2Midi:
                 has_changed = True
 
             if has_changed:
-                ui.draw()
+                ui.process()
+
+            if ui.is_closed():
+                going = False
 
             pygame.time.wait(10)
 
+        ui.close()
         pygame.quit()
 
 

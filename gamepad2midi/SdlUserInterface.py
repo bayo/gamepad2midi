@@ -9,6 +9,9 @@ import pygame
 class SdlUserInterface:
 
     def __init__(self):
+        pass
+
+    def init(self):
         self.joysticks = []
         self.status = {}
 
@@ -24,6 +27,9 @@ class SdlUserInterface:
         self.text_color_off = (255, 255, 255)
         self.color_on = (50, 255, 50)
         self.text_color_on = (255, 255, 255)
+
+    def close(self):
+        pass
 
     def resize_screen(self, size):
         if self.screen_size == size:
@@ -78,7 +84,10 @@ class SdlUserInterface:
         self.win.blit(textimg, pos)
         return pos[0] + textimg.get_width() + 5, pos[1]
 
-    def draw(self):
+    def is_closed(self):
+        return False
+
+    def process(self):
         bgcolor = (50, 50, 50)
         self.win.fill(bgcolor, (0, 0, self.screen_size[0], self.screen_size[1]))
         width = 0
