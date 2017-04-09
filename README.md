@@ -20,7 +20,7 @@ Installation
 
 You have to install `pygame`, PyQt if you like and `rtmidi`.
 ```bash
-sudo apt-get install python-pygame python-pyqt python-rtmidi
+sudo apt-get install python-pygame python-pyqt4 python-rtmidi
 ```
 
 If `rtmidi` for Python is not packaged for your distribution,
@@ -53,7 +53,7 @@ Or you can use it as a library, and execute your own script
 based on `mygamepad2midi.py` anywhere you want.
 
 ```bash
-cd gamepad2midi.py
+cd gamepad2midi.git
 pip install --user .
 ```
 
